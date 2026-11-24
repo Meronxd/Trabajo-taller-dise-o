@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phyphox version="1.10" locale="es">
+  <title>Horómetro en vivo</title><category>Mantenimiento</category>
+  <description>Lectura directa de la ESP32-S3 por Bluetooth. La placa mide las horas; el teléfono solo las muestra.</description>
+  <data-containers>
+    <container size="1">horas</container><container size="1">proxima</container>
+    <container size="1">contacto</container><container size="1">aviso</container>
+  </data-containers>
+  <input>
+    <bluetooth uuid="b7215800-26f4-49cf-942d-7a1c6f440901" mode="notification">
+      <output char="b7215801-26f4-49cf-942d-7a1c6f440901" conversion="float64LittleEndian" offset="0" length="8">horas</output>
+      <output char="b7215801-26f4-49cf-942d-7a1c6f440901" conversion="float64LittleEndian" offset="8" length="8">proxima</output>
+      <output char="b7215801-26f4-49cf-942d-7a1c6f440901" conversion="uInt8" offset="16" length="1">contacto</output>
+      <output char="b7215801-26f4-49cf-942d-7a1c6f440901" conversion="uInt8" offset="17" length="1">aviso</output>
+    </bluetooth>
+  </input>
+  <views><view label="Horómetro">
+    <value label="Horas acumuladas" unit="h" precision="2" size="1.8"><input>horas</input></value>
+    <value label="Interruptor"><input>contacto</input><map min="0" max="0">OFF · En pausa</map><map min="1" max="1">ON · Contando</map></value>
+    <value label="Próximo aviso" unit="h" precision="0"><input>proxima</input></value>
+    <value label="Mantenimiento"><input>aviso</input><map min="0" max="0">Sin aviso pendiente</map><map min="1" max="1">Revisión pendiente</map></value>
+    <info label="Modo exposición: 1 segundo en ON equivale a 1 hora simulada. Mantenga el visor abierto durante la prueba."/>
+  </view></views>
+</phyphox>

@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<phyphox version="1.10" locale="es">
+  <title>Horómetro con alarma</title>
+  <category>Mantenimiento</category>
+  <description>Aviso sonoro y estado de mantenimiento con phyphox en pantalla. Conectar con Horometro-UAI.</description>
+  <data-containers>
+    <container size="1">horas</container>
+    <container size="1">proxima</container>
+    <container size="1">contacto</container>
+    <container size="1">aviso</container>
+    <container size="1" init="0">previo</container>
+    <container size="1" init="0">cambio</container>
+    <container size="1" init="0">confirmado</container>
+    <container size="1" init="0">nuevo</container>
+    <container size="1" init="0">prueba</container>
+    <container size="1" init="0">amplitud</container>
+  </data-containers>
+  <input>
+    <bluetooth uuid="b7215800-26f4-49cf-942d-7a1c6f440901" mode="notification">
+      <output char="b7215801-26f4-49cf-942d-7a1c6f440901" conversion="float64LittleEndian" offset="0" length="8">horas</output>
+      <output char="b7215801-26f4-49cf-942d-7a1c6f440901" conversion="float64LittleEndian" offset="8" length="8">proxima</output>
+      <output char="b7215801-26f4-49cf-942d-7a1c6f440901" conversion="uInt8" offset="16" length="1">contacto</output>
+      <output char="b7215801-26f4-49cf-942d-7a1c6f440901" conversion="uInt8" offset="17" length="1">aviso</output>
+    </bluetooth>
+  </input>
+  <output>
+    <audio loop="false">
+      <tone>
+        <input parameter="frequency" type="value">840</input>
+        <input parameter="duration" type="value">0.24</input>
+        <input parameter="amplitude">amplitud</input>
+      </tone>
+    </audio>
+  </output>
+  <analysis sleep="0.30">
+    <if greater="true">
+      <input as="a" clear="false">proxima</input>
+      <input as="b" clear="false">previo</input>
+      <input as="true" clear="false">aviso</input>
+      <input as="false" type="value">0</input>
+      <output as="result">cambio</output>
+    </if>
+    <if greater="true" equal="true">
+      <input as="a" clear="false">horas</input>
+      <input as="b" clear="false">previo</input>
+      <input as="true" clear="false">cambio</input>
+      <input as="false" type="value">0</input>
+      <output as="result">confirmado</output>
+    </if>
+    <if greater="true">
+      <input as="a" clear="false">previo</input>
+      <input as="b" type="value">0</input>
+      <input as="true" clear="false">confirmado</input>
+      <input as="false" type="value">0</input>
+      <output as="result">nuevo</output>
+    </if>
+    <if greater="true">
+      <input as="a" clear="false">prueba</input>
+      <input as="b" type="value">0</input>
+      <input as="true" type="value">0.75</input>
+      <input as="false" clear="false">nuevo</input>
+      <output as="result">amplitud</output>
+    </if>
+    <append>
+      <input clear="false">proxima</input>
+      <output>previo</output>
+    </append>
+    <append>
+      <input type="value">0</input>
+      <output>prueba</output>
+    </append>
+  </analysis>
+  <views>
+    <view label="Horómetro">
+      <value label="Horas acumuladas" unit="h" precision="2" size="1.8">
+        <input>horas</input>
+      </value>
+      <value label="Interruptor">
+        <input>contacto</input>
+        <map min="0" max="0">OFF · En pausa</map>
+        <map min="1" max="1">ON · Contando</map>
+      </value>
+      <value label="Próximo aviso" unit="h" precision="0">
+        <input>proxima</input>
+      </value>
+      <value label="Mantenimiento">
+        <input>aviso</input>
+        <map min="0" max="0">Sin aviso pendiente</map>
+        <map min="1" max="1">Revisión pendiente</map>
+      </value>
+      <info label="Mantenga el visor abierto y pulse ▶. El tono avisa al alcanzar el próximo umbral. El botón solo prueba el altavoz." />
+      <button label="Probar sonido">
+        <input type="value">1</input>
+        <output>prueba</output>
+      </button>
+    </view>
+  </views>
+</phyphox>
